@@ -115,11 +115,11 @@
                         <h3 class="text-base font-semibold leading-7 text-gray-900">Investment Result</h3>
                         <p class="mt-1 max-w-2xl text-sm leading-6 text-gray-500">Thank You for choosing us! Hope you'll get your dream.</p>
                     </div>
-                    <!-- <div v-for="(item, key) in investment" :key="key" class="mt-6 border-t border-gray-100">
+                    <div v-for="(item, index) in investment" :key="index" class="mt-6 border-t border-gray-100">
                         <dl class="divide-y divide-gray-100">
                             <div class="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                                 <dt class="text-sm font-medium leading-6 text-gray-900">Tahun</dt>
-                                <dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">{{ key }}</dd>
+                                <dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">{{ index }}</dd>
                             </div>
                             <div class="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                                 <dt class="text-sm font-medium leading-6 text-gray-900">Awal</dt>
@@ -134,8 +134,10 @@
                                 <dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">{{ item.akhir }}</dd>
                             </div>
                         </dl>
+                    </div>
+                    <!-- <div v-for="(item, key) in investment" :key="key">
+                        <p>Tahun: {{ item }}</p>
                     </div> -->
-                    <p>{{ investment }}</p>
                 </div>
             </div>
         </div>
@@ -156,33 +158,76 @@ const navigation = [
 ]
 
 const mobileMenuOpen = ref(false)
+interface InvestmentItem {
+  awal: number;
+  bunga: number;
+  akhir: number;
+}
+
+interface InvestmentResponse {
+  [key: string]: InvestmentItem;
+}
+
 const formData = ref({
     jenis_kelamin: '',
     usia: null,
     perokok: '',
     nominal: null,
     lama_investasi: null,
-})
-const investment = ref({
-    
 });
+
+let investment = ref<InvestmentResponse>({});
 const isFormSubmitted = ref(false);
 
 const submitForm = async () => {
-    const { data, error } = await useAsyncData('submitForm', () => $fetch('http://localhost:2000/investasi', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(formData.value)
-    }));
+    const { data, error } = await useAsyncData('submitForm', () => 
+        $fetch('http://localhost:2000/investasi', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(formData.value)
+        })
+    );
 
     if (error.value) {
         console.error('Error submitting form:', error.value);
     } else {
-        console.log('Form submitted successfully:', data.value);
-        investment.value = data.value;
+        console.log('Form submitted successfully:', investment);
+        investment = data.value.data;
         isFormSubmitted.value = true;
     }
-}
+	}
+
+// const formData = ref({
+//     jenis_kelamin: '',
+//     usia: null,
+//     perokok: '',
+//     nominal: null,
+//     lama_investasi: null,
+// })
+// const investment = ref({
+//     data: {
+
+//     }
+// });
+// const isFormSubmitted = ref(false);
+
+// const submitForm = async () => {
+//     const { data, error } = await useAsyncData('submitForm', () => $fetch('http://localhost:2000/investasi', {
+//         method: 'POST',
+//         headers: {
+//             'Content-Type': 'application/json'
+//         },
+//         body: JSON.stringify(formData.value)
+//     }));
+
+//     if (error.value) {
+//         console.error('Error submitting form:', error.value);
+//     } else {
+//         console.log('Form submitted successfully:', data.value);
+//         investment.value = data.value.response;
+//         isFormSubmitted.value = true;
+//     }
+// }
 </script>

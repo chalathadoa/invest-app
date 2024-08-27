@@ -252,7 +252,7 @@ const submitForm = async () => {
     if (error.value) {
         console.error('Error submitting form:', error.value);
     } else {
-        console.log('Form submitted successfully:');
+        console.log('Form submitted successfully:', data.value);
         transaction.value = {
             tgl_transaksi: data.value.response.data.tgl_transaksi,
             no_transaction: data.value.response.data.no_transaction,
