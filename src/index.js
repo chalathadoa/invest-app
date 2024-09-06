@@ -21,11 +21,6 @@ app.use(cors({
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     credentials: true
 }));
-// app.use(express.static(path.join(__dirname, 'public/dist')));
-
-// app.get('*', (req, res) => {
-//     res.sendFile(path.join(__dirname, 'public/dist/index.html'));
-// });
 
 app.post('/investasi', async (req, res) => {
     const { 
@@ -67,16 +62,16 @@ app.post('/investasi', async (req, res) => {
         awal = akhir;
     }
 
-    // const investasi = await prisma.invest.create({
-    //     data: {
-    //         jenis_kelamin,
-    //         usia,
-    //         perokok,
-    //         nominal,
-    //         lama_investasi,
-    //         hasil_investasi
-    //     }
-    // });
+    const investasi = await prisma.invest.create({
+        data: {
+            jenis_kelamin,
+            usia,
+            perokok,
+            nominal,
+            lama_investasi,
+            hasil_investasi
+        }
+    });
 
     res.json({
         message: "Success",
@@ -110,39 +105,27 @@ app.post('/payment', async (req, res)=> {
         total_bayar = nominal;
     }
 
-    // const transaction = await prisma.transaction.create({
-    //     data: {
-    //         tgl_transaksi: new Date(),
-    //         no_transaction: generateNoTransaction(),
-    //         nama: Nama,
-    //         email,
-    //         jenis_kelamin,
-    //         usia,
-    //         perokok,
-    //         nominal,
-    //         lama_investasi,
-    //         periode_pembayaran,
-    //         metode_bayar,
-    //         total_bayar
-    //     }
-    // });
+    const transaction = await prisma.transaction.create({
+        data: {
+            tgl_transaksi: new Date(),
+            no_transaction: generateNoTransaction(),
+            nama: nama,
+            email,
+            jenis_kelamin,
+            usia,
+            perokok,
+            nominal,
+            lama_investasi,
+            periode_pembayaran,
+            metode_bayar,
+            total_bayar
+        }
+    });
 
     const response = {
         message: 'Success',
         status: 200,
-        data: {
-            tgl_transaksi: new Date().toISOString(),
-            no_transaction: generateNoTransaction(),
-            nama: nama,
-            jenis_kelamin: jenis_kelamin,
-            usia: usia,
-            email: email,
-            nominal: nominal,
-            lama_investasi: lama_investasi,
-            periode_pembayaran: periode_pembayaran,
-            metode_bayar: metode_bayar,
-            total_bayar: total_bayar,
-        }
+        data: transaction
     }; 
     res.json({
         response

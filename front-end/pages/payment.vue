@@ -44,7 +44,7 @@
                 <div class="mt-6 flow-root">
                     <div class="-my-6 divide-y divide-gray-500/10">
                     <div class="space-y-2 py-6">
-                        <a v-for="item in navigation" :key="item.name" :href="item.href" class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50">{{ item.name }}</a>
+                        <a v-for="item in navigation" :key="item.name" class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50">{{ item.name }}</a>
                     </div>
                     <div class="py-6">
                         <a href="#" class="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50">Log in</a>
@@ -204,8 +204,6 @@
 import { ref } from 'vue'
 import { Dialog, DialogPanel } from '@headlessui/vue'
 import { Bars3Icon, XMarkIcon } from '@heroicons/vue/24/outline'
-import { PaperClipIcon } from '@heroicons/vue/20/solid'
-import { useAsyncData } from 'nuxt/app';
 
 const navigation = [
     { name: 'Home', to: '/' },
@@ -214,6 +212,7 @@ const navigation = [
 ]
 
 const mobileMenuOpen = ref(false)
+
 const formData = ref({
     nama: '',
     jenis_kelamin: '',
@@ -223,7 +222,8 @@ const formData = ref({
     nominal: null,
     lama_investasi: null,
     periode_pembayaran: '',
-    metode_bayar: ''
+    metode_bayar: '',
+    deskripsi: ''
 })
 const transaction = ref({
     tgl_transaksi: '',
@@ -236,22 +236,38 @@ const transaction = ref({
     lama_investasi: null,
     periode_pembayaran: '',
     metode_bayar: '',
-    total_bayar: null,
+    total_bayar: null
 });
 const isFormSubmitted = ref(false);
 
 const submitForm = async () => {
-    const { data, error } = await useAsyncData('submitForm', () => $fetch('http://localhost:2000/payment', {
+    const { data, error } = await useFetch<{
+        response: {
+            data: {
+                tgl_transaksi: string;
+                no_transaction: string;
+                nama: string;
+                jenis_kelamin: string;
+                usia: null;
+                email: string;
+                nominal: null;
+                lama_investasi: null;
+                periode_pembayaran: string;
+                metode_bayar: string;
+                total_bayar: null;
+            }
+        }
+    }>('http://localhost:2000/payment', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },
         body: JSON.stringify(formData.value)
-    }));
+    });
 
     if (error.value) {
         console.error('Error submitting form:', error.value);
-    } else {
+    } else if (data.value) {
         console.log('Form submitted successfully:', data.value);
         transaction.value = {
             tgl_transaksi: data.value.response.data.tgl_transaksi,
@@ -265,8 +281,9 @@ const submitForm = async () => {
             periode_pembayaran: data.value.response.data.periode_pembayaran,
             metode_bayar: data.value.response.data.metode_bayar,
             total_bayar: data.value.response.data.total_bayar
-        }
+        };
         isFormSubmitted.value = true;
     }
-}
+};
+
 </script>
